@@ -1,0 +1,27 @@
+html
+    head
+        title Collections
+    body
+        header
+            menu
+                ul
+                    each collection in collections
+                        li
+                            a(href='/' + collection.slug)= collection.title
+        main
+            each section, title in sections
+                form(action='/' + collectionSlug + '/' + section.slug, method='POST')
+                    h3= title
+                    table
+                        each item, i in section.items
+                            tr(class=item._owned ? 'owned' : '')
+                                each v, k in item
+                                    if !k.startsWith('_')
+                                        td= v
+                                td
+                                    a(name=item._anchor)
+                                    button(value=i, name='itemNo')
+                                        if item._owned
+                                            span Remove
+                                        else
+                                            span Add
