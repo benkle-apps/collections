@@ -1,27 +1,40 @@
+doctype html
 html
     head
         title Collections
+        meta(charset="utf-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1, shrink-to-fit=no")
+        link(rel="stylesheet", href="css/bootstrap.css")
     body
-        header
-            menu
-                ul
-                    each collection in collections
-                        li
-                            a(href='/' + collection.slug)= collection.title
-        main
-            each section, title in sections
-                form(action='/' + collectionSlug + '/' + section.slug, method='POST')
-                    h3= title
-                    table
-                        each item, i in section.items
-                            tr(class=item._owned ? 'owned' : '')
-                                each v, k in item
-                                    if !k.startsWith('_')
-                                        td= v
-                                td
-                                    a(name=item._anchor)
-                                    button(value=i, name='itemNo')
-                                        if item._owned
-                                            span Remove
-                                        else
-                                            span Add
+        nav.navbar.navbar-expand-md.navbar-dark.bg-dark
+            ul.navbar-nav
+                each collection in collections
+                    li.nav-item
+                        a.nav-link(href='/' + collection.slug)= collection.title
+        main.container(role="main")
+            if sections
+                each section, title in sections
+                    div.border.rounded.row.mb-4
+                        div.bg-secondary.text-light.col-12.navbar.navbar-dark
+                            span.navbar-brand #{title} (#{section.owned} of #{section.items.length})
+                            button.btn.btn-primary(data-toggle='collapse', href='#' + section.slug.replace(/[.]/g, '-')) Anzeigen
+                        div.collapse(id=section.slug.replace(/[.]/g, '-'))
+                            form(action='/' + collectionSlug + '/' + section.slug, method='POST')
+                                table
+                                    each item, i in section.items
+                                        tr(class=item._owned ? ["bg-info", "text-light"]:[])
+                                            each v, k in item
+                                                if !k.startsWith('_')
+                                                    td.px-1= v
+                                            td.px-1
+                                                a(name=item._anchor)
+                                                button.btn.btn-block.btn-primary(value=i, name='itemNo')
+                                                    if item._owned
+                                                        span Remove
+                                                    else
+                                                        span Add
+            else
+                p Please select a collection.
+        footer.row
+            script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js")
+            script(src="js/bootstrap.bundle.js")

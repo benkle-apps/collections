@@ -33,6 +33,8 @@ let app = express();
 const layout = pug.compileFile('./templates/layout.pug', {});
 
 app.use(express.urlencoded());
+app.use(express.static('./static/'));
+app.use(express.static('./node_modules/bootstrap/dist/'));
 
 app.get('/', (request, response) => {
     buildMenu()
@@ -78,6 +80,10 @@ app.get('/:collection', (request, response) => {
                             ...obj,
                             [k.replace(/^[0-9]+-|\.json$/g, '').toTitleCase()]: {
                                 slug: k,
+                                owned: loadedSections[v].reduce((a, c) => {
+                                    let plus = c._owned ? 1 : 0;
+                                    return a + plus;
+                                }, 0),
                                 items: loadedSections[v].map((item, i) => ({
                                     ...item,
                                     _anchor: sha1(k + '-' + i)

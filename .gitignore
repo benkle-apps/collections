@@ -37,5 +37,5 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
-collections
 !collections/.gitkeep
+collections/
