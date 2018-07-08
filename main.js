@@ -58,9 +58,15 @@ app.post('/:collection/:section', (request, response) => {
                 {
                     spaces: 4
                 }
-            );
+            ).then(() => sectionData[itemNo]._owned);
         })
-        .then(() => response.redirect('/' + collection + '#' + sha1(section + '-' + itemNo)));
+        .then((owned) => {
+            if (request.xhr) {
+                response.json({owned: owned});
+            } else {
+                response.redirect('/' + collection + '#' + sha1(section + '-' + itemNo));
+            }
+        });
 });
 
 app.get('/:collection', (request, response) => {
