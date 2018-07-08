@@ -74,13 +74,16 @@ app.get('/:collection', (request, response) => {
         .then((collections) => {
             let collection = request.params.collection;
             return fs.readdir('./collections/' + collection)
+                .then((sections) => sections
+                    .filter((section) => section.charAt(0) !== '.')
+                    .filter((section) => section.endsWith('.json'))
+                )
                 .then((sections) => Promise
                     .all(sections
-                        .filter((collection) => collection.charAt(0) !== '.')
-                        .filter((section) => section.endsWith('.json'))
                         .map((section) => fs.readJson('./collections/' + collection + '/' + section))
                     )
-                    .then((loadedSections) => ({
+                    .then((loadedSections) => (
+                        {
                         collections: collections,
                         sections: sections.reduce((obj, k, v) => ({
                             ...obj,
@@ -97,12 +100,16 @@ app.get('/:collection', (request, response) => {
                             }
                         }), {}),
                         collectionSlug: collection
-                    }))
-                );
+                    }
+                    ))
+                )
         })
         .then((data) => {
             response.setHeader('Content-Type', 'text/html; charset=utf-8');
-            response.end(layout(data))
+            response.end(layout(data));
+        })
+        .catch((e) => {
+            response.json(e);
         });
 });
 
