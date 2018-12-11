@@ -32,7 +32,7 @@ let app = express();
 
 const layout = pug.compileFile('./templates/layout.pug', {});
 
-app.use(express.urlencoded());
+app.use(express.urlencoded({extended: true}));
 app.use(express.static('./static/'));
 app.use(express.static('./node_modules/bootstrap/dist/'));
 
