@@ -15,7 +15,7 @@ html
             if sections
                 each section, title in sections
                     div.border.rounded.row.mb-4
-                        div.bg-secondary.text-light.col-12.navbar.navbar-dark
+                        div.text-light.col-12.navbar.navbar-dark(class= section.owned<section.items.length ? "bg-secondary" : "bg-info")
                             span.navbar-brand #{title} (#{section.owned} of #{section.items.length})
                             button.btn.btn-primary(data-toggle='collapse', href='#' + section.slug.replace(/[.]/g, '-')) Anzeigen
                         div.collapse(id=section.slug.replace(/[.]/g, '-'))
