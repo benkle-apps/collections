@@ -16,10 +16,10 @@ $(() => {
         }).then((response) => {
             if (response.owned) {
                 button.find('span').text('Remove');
-                button.closest('tr').addClass("bg-info text-light");
+                button.closest('div.row').addClass("bg-info text-light");
             } else {
                 button.find('span').text('Add');
-                button.closest('tr').removeClass("bg-info text-light");
+                button.closest('div.row').removeClass("bg-info text-light");
             }
         });
     });

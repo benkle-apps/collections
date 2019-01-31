@@ -15,24 +15,24 @@ html
             if sections
                 each section, title in sections
                     div.border.rounded.row.mb-4
-                        div.text-light.col-12.navbar.navbar-dark(class= section.owned<section.items.length ? "bg-secondary" : "bg-info")
+                        div.text-light.col-12.navbar.navbar-dark(class= section.owned < section.items.length ? "bg-secondary" : "bg-info")
                             span.navbar-brand #{title} (#{section.owned} of #{section.items.length})
                             button.btn.btn-primary(data-toggle='collapse', href='#' + section.slug.replace(/[.]/g, '-')) Anzeigen
-                        div.collapse(id=section.slug.replace(/[.]/g, '-'))
+                        div.container-fluid.collapse(id=section.slug.replace(/[.]/g, '-'))
                             form(action='/' + collectionSlug + '/' + section.slug, method='POST')
-                                table
-                                    each item, i in section.items
-                                        tr(class=item._owned ? ["bg-info", "text-light"]:[])
+                                each item, i in section.items
+                                    div.row(class=item._owned ? ["bg-info", "text-light"] : [])
+                                        block item
                                             each v, k in item
                                                 if !k.startsWith('_')
-                                                    td.px-1= v
-                                            td.px-1
-                                                a(name=item._anchor)
-                                                button.btn.btn-block.btn-primary(value=i, name='itemNo')
-                                                    if item._owned
-                                                        span Remove
-                                                    else
-                                                        span Add
+                                                    div.col.px-1= v
+                                        div.col-1.p-1
+                                            a(name=item._anchor)
+                                            button.btn.btn-block.btn-primary(value=i, name='itemNo')
+                                                if item._owned
+                                                    span Remove
+                                                else
+                                                    span Add
             else
                 p Please select a collection.
         footer.row

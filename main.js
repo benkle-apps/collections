@@ -30,7 +30,7 @@ if (isNaN(port)) {
 
 let app = express();
 
-const layout = pug.compileFile('./templates/layout.pug', {});
+const defaultTemplate = pug.compileFile('./templates/layout.pug', {});
 
 app.use(express.urlencoded({extended: true}));
 app.use(express.static('./static/'));
@@ -41,7 +41,7 @@ app.get('/', (request, response) => {
         .then((collections) => ({collections: collections}))
         .then((data) => {
             response.setHeader('Content-Type', 'text/html; charset=utf-8');
-            response.end(layout(data))
+            response.end(defaultTemplate(data))
         });
 });
 
@@ -102,11 +102,17 @@ app.get('/:collection', (request, response) => {
                         collectionSlug: collection
                     }
                     ))
+                    .then((variables) => fs.exists('./collections/' + collection + '/template.pug')
+                            .then((exists) => ({
+                                variables: variables,
+                                template: exists ? pug.compileFile('./collections/' + collection + '/template.pug') : defaultTemplate
+                            }))
+                    )
                 )
         })
         .then((data) => {
             response.setHeader('Content-Type', 'text/html; charset=utf-8');
-            response.end(layout(data));
+            response.end(data.template(data.variables));
         })
         .catch((e) => {
             response.json(e);
