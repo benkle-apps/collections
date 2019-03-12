@@ -17,7 +17,7 @@ html
                     div.border.rounded.row.mb-4
                         div.text-light.col-12.navbar.navbar-dark(class= section.owned < section.items.length ? "bg-secondary" : "bg-info")
                             span.navbar-brand #{title} (#{section.owned} of #{section.items.length})
-                            button.btn.btn-primary(data-toggle='collapse', href='#' + section.slug.replace(/[.]/g, '-')) Show/Hide
+                            button.btn.btn-primary(data-toggle='collapse', data-target='#' + section.slug.replace(/[.]/g, '-')) Show/Hide
                         div.container-fluid.collapse(id=section.slug.replace(/[.]/g, '-'))
                             form(action='/' + collectionSlug + '/' + section.slug, method='POST')
                                 each item, i in section.items
