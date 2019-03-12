@@ -6,12 +6,15 @@ const express = require('express');
 const sha1 = require('sha1');
 const path = require('path');
 
-const appDir = path.dirname(path.resolve(process.argv[1])) + '/';
-const contentDir = path.resolve(process.argv[2]) + '/';
+const appDir = path.dirname(path.resolve(process.argv[1]));
+const contentDir = path.resolve(process.argv[2]);
 let port = parseInt(process.argv.pop(), 10);
 if (isNaN(port)) {
     port = 8080;
 }
+const pugOptions = {
+    basedir: path.join(appDir, 'templates')
+};
 
 Object.assign(String.prototype, {
     toTitleCase() {
@@ -33,11 +36,11 @@ const buildMenu = () =>
 
 let app = express();
 
-const defaultTemplate = pug.compileFile(appDir + 'templates/layout.pug', {});
+const defaultTemplate = pug.compileFile(path.join(pugOptions.basedir, 'layout.pug'), pugOptions);
 
 app.use(express.urlencoded({extended: true}));
-app.use(express.static(appDir + 'static/'));
-app.use(express.static(appDir + 'node_modules/bootstrap/dist/'));
+app.use(express.static(path.join(appDir, 'static')));
+app.use(express.static(path.join(appDir, 'node_modules/bootstrap/dist')));
 
 app.get('/', (request, response) => {
     buildMenu()
@@ -108,7 +111,7 @@ app.get('/:collection', (request, response) => {
                     .then((variables) => fs.exists(path.join(contentDir, collection, 'template.pug'))
                             .then((exists) => ({
                                 variables: variables,
-                                template: exists ? pug.compileFile(path.join(contentDir, collection, 'template.pug')) : defaultTemplate
+                                template: exists ? pug.compileFile(path.join(contentDir, collection, 'template.pug'), pugOptions) : defaultTemplate
                             }))
                     )
                 )
