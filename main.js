@@ -26,12 +26,13 @@ Object.assign(String.prototype, {
 
 const buildMenu = () =>
     fs.readdir(contentDir)
-        .then((collections) => collections
-            .filter((collection) => collection.charAt(0) !== '.')
-            .map((collection) => { return {
+        .then(collections => collections
+            .filter(collection => collection.charAt(0) !== '.')
+            .filter(collection => fs.statSync(path.join(contentDir, collection)).isDirectory())
+            .map(collection => ({
                 slug: collection,
                 title: collection.toTitleCase()
-            }})
+            }))
         );
 
 let app = express();
@@ -44,8 +45,8 @@ app.use(express.static(path.join(appDir, 'node_modules/bootstrap/dist')));
 
 app.get('/', (request, response) => {
     buildMenu()
-        .then((collections) => ({collections: collections}))
-        .then((data) => {
+        .then(collections => ({collections: collections}))
+        .then(data => {
             response.setHeader('Content-Type', 'text/html; charset=utf-8');
             response.end(defaultTemplate(data))
         });
@@ -56,7 +57,7 @@ app.post('/:collection/:section', (request, response) => {
     let section = request.params.section;
     let itemNo = parseInt(request.body.itemNo, 10);
     fs.readJson(path.join(contentDir, collection, section))
-        .then((sectionData) => {
+        .then(sectionData => {
             sectionData[itemNo]._owned = !sectionData[itemNo]._owned;
             return fs.writeJson(
                 path.join(contentDir, collection, section),
@@ -66,7 +67,7 @@ app.post('/:collection/:section', (request, response) => {
                 }
             ).then(() => sectionData[itemNo]._owned);
         })
-        .then((owned) => {
+        .then(owned => {
             if (request.xhr) {
                 response.json({owned: owned});
             } else {
@@ -77,18 +78,17 @@ app.post('/:collection/:section', (request, response) => {
 
 app.get('/:collection', (request, response) => {
     buildMenu()
-        .then((collections) => {
+        .then(collections => {
             let collection = request.params.collection;
             return fs.readdir(path.join(contentDir, collection))
-                .then((sections) => sections
-                    .filter((section) => section.charAt(0) !== '.')
-                    .filter((section) => section.endsWith('.json'))
+                .then(sections => sections
+                    .filter(section => section.charAt(0) !== '.')
+                    .filter(section => section.endsWith('.json'))
                 )
-                .then((sections) => Promise
-                    .all(sections
-                        .map((section) => fs.readJson(path.join(contentDir, collection, section)))
+                .then(sections => Promise
+                    .all(sections.map(section => fs.readJson(path.join(contentDir, collection, section)))
                     )
-                    .then((loadedSections) => (
+                    .then(loadedSections => (
                         {
                         collections: collections,
                         sections: sections.reduce((obj, k, v) => ({
@@ -108,21 +108,19 @@ app.get('/:collection', (request, response) => {
                         collectionSlug: collection
                     }
                     ))
-                    .then((variables) => fs.exists(path.join(contentDir, collection, 'template.pug'))
-                            .then((exists) => ({
+                    .then(variables => fs.exists(path.join(contentDir, collection, 'template.pug'))
+                            .then(exists => ({
                                 variables: variables,
                                 template: exists ? pug.compileFile(path.join(contentDir, collection, 'template.pug'), pugOptions) : defaultTemplate
                             }))
                     )
                 )
         })
-        .then((data) => {
+        .then(data => {
             response.setHeader('Content-Type', 'text/html; charset=utf-8');
             response.end(data.template(data.variables));
         })
-        .catch((e) => {
-            response.json(e);
-        });
+        .catch(e => response.json(e));
 });
 
 app.listen(port);
