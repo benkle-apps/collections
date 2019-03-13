@@ -14,14 +14,15 @@ html
         main.container(role="main")
             if sections
                 each section, title in sections
+                    - var sectionID = 'section-' + section.slug.replace(/[.]/g, '-')
                     div.border.rounded.row.mb-4
                         div.text-light.col-12.navbar.navbar-dark(class= section.owned < section.items.length ? "bg-secondary" : "bg-info")
                             span.navbar-brand #{title} (#{section.owned} of #{section.items.length})
-                            button.btn.btn-primary(data-toggle='collapse', data-target='#' + section.slug.replace(/[.]/g, '-')) Show/Hide
-                        div.container-fluid.collapse(id=section.slug.replace(/[.]/g, '-'))
+                            button.btn.btn-primary(data-toggle='collapse', data-target='#' + sectionID) Show/Hide
+                        div.container-fluid.collapse(id=sectionID)
                             form(action='/' + collectionSlug + '/' + section.slug, method='POST')
                                 each item, i in section.items
-                                    div.row(class=item._owned ? ["bg-info", "text-light"] : [])
+                                    div.row(class=item._owned ? ["bg-info", "text-light"]: [])
                                         block item
                                             each v, k in item
                                                 if !k.startsWith('_')
@@ -36,6 +37,6 @@ html
             else
                 p Please select a collection.
         footer.row
-            script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js")
+            script(src="https://code.jquery.com/jquery-3.2.1.slim.min.js", crossorigin="anonymous")
             script(src="js/bootstrap.bundle.js")
-            script(src="toggle.js")
+            script(src="js/toggle.js")
