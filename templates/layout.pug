@@ -27,13 +27,14 @@ html
                                             each v, k in item
                                                 if !k.startsWith('_')
                                                     div.col.px-1= v
-                                        div.col-1.p-1
-                                            a(name=item._anchor)
-                                            button.btn.btn-block.btn-primary(value=i, name='itemNo')
-                                                if item._owned
-                                                    span Remove
-                                                else
-                                                    span Add
+                                        if !('_readonly' in item) || !item._readonly
+                                            div.col-1.p-1
+                                                a(name=item._anchor)
+                                                button.btn.btn-block.btn-primary(value=i, name='itemNo')
+                                                    if item._owned
+                                                        span Remove
+                                                    else
+                                                        span Add
             else
                 p Please select a collection.
         footer.row

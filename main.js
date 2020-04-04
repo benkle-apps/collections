@@ -58,14 +58,17 @@ app.post('/:collection/:section', (request, response) => {
     let itemNo = parseInt(request.body.itemNo, 10);
     fs.readJson(path.join(contentDir, collection, section))
         .then(sectionData => {
-            sectionData[itemNo]._owned = !sectionData[itemNo]._owned;
-            return fs.writeJson(
-                path.join(contentDir, collection, section),
-                sectionData,
-                {
-                    spaces: 4
-                }
-            ).then(() => sectionData[itemNo]._owned);
+            if (!('_readonly' in sectionData[itemNo]) || false === sectionData[itemNo]._readonly) {
+                sectionData[itemNo]._owned = !sectionData[itemNo]._owned;
+                return fs.writeJson(
+                    path.join(contentDir, collection, section),
+                    sectionData,
+                    {
+                        spaces: 4
+                    }
+                ).then(() => sectionData[itemNo]._owned);
+            }
+            return sectionData[itemNo]._owned;
         })
         .then(owned => {
             if (request.xhr) {
