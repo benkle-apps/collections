@@ -41,6 +41,7 @@ const defaultTemplate = pug.compileFile(path.join(pugOptions.basedir, 'layout.pu
 
 app.use(express.urlencoded({extended: true}));
 app.use(express.static(path.join(appDir, 'static')));
+app.use(express.static(path.join(appDir, 'node_modules/jquery/dist')));
 app.use(express.static(path.join(appDir, 'node_modules/bootstrap/dist')));
 
 app.get('/', (request, response) => {
