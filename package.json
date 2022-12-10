@@ -5,7 +5,7 @@
   "dependencies": {
     "pug": "~2.0.3",
     "fs-extra": "~6.0.1",
-    "express": "~4.16.3",
+    "express": "~4.17.3",
     "sha1": "~1.1.1",
     "bootstrap": "4.4.1",
     "jquery": "^3.2"
